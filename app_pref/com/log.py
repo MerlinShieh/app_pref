@@ -5,8 +5,6 @@ import os
 import colorlog
 
 
-
-
 class Log:
     def __init__(self, log_name=None, directory=None, level='INFO', debug=True):
         """
