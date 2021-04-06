@@ -26,6 +26,8 @@ class Log:
 
         if not log_name:
             self.log_name = timeSecond
+        else:
+            self.log_name = log_name
         self.log_path = r'{}/{}.log'.format(directory, self.log_name)
         self.level = level
         self.debug = debug
@@ -69,10 +71,18 @@ class Log:
 
 
 if __name__ == '__main__':
-    logger = Log(level='DEBUG').logger
+    from com import logger
     logger.debug('debug message ')
     logger.info('info message')
     logger.warning('warning message')
     logger.error('error message')
     logger.critical('critical message')
     logger.debug(logger.name)
+
+    # logger = Log(level='DEBUG').logger
+    # logger.debug('debug message ')
+    # logger.info('info message')
+    # logger.warning('warning message')
+    # logger.error('error message')
+    # logger.critical('critical message')
+    # logger.debug(logger.name)

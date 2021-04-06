@@ -1,2 +1,2 @@
 from com.log import Log
-logger = Log(level='DEBUG').logger
+logger = Log(level='DEBUG', log_name='TestLogger').logger
