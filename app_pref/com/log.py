@@ -47,7 +47,7 @@ class Log:
         # 日志级别
         level = eval("logging." + self.level)
         # 日志格式
-        fmt = logging.Formatter('%(asctime)s.%(msecs)03d    %(filename)s    --->  [%(levelname)s]   '
+        fmt = logging.Formatter('%(asctime)s    %(filename)s    --->  [%(levelname)s]   '
                                 '%(funcName)s   line:%(lineno)d  : %(message)s')
 
         # 设置handler
@@ -59,7 +59,7 @@ class Log:
         if self.debug:
             self.Console_hander = logging.StreamHandler()
             self.Console_hander.setLevel(level)
-            fmt = colorlog.ColoredFormatter(fmt='%(log_color)s %(asctime)s.%(msecs)03d    %(filename)s    --->  '
+            fmt = colorlog.ColoredFormatter(fmt='%(log_color)s %(asctime)s    %(filename)s    --->  '
                                                 '[%(levelname)s]   %(funcName)s   line:%(lineno)d  : %(message)s',
                                             log_colors=self.log_colors_config)
             self.Console_hander.setFormatter(fmt)
