@@ -56,10 +56,10 @@ class Log:
                                 '%(funcName)s   line:%(lineno)d  : %(message)s')
 
         # 设置handler
-        File_handler = logging.FileHandler(self.log_path)
-        File_handler.setLevel(level=level)
-        File_handler.setFormatter(fmt=fmt)
-        self.logger.addHandler(File_handler)
+        self.File_handler = logging.FileHandler(self.log_path)
+        self.File_handler.setLevel(level=level)
+        self.File_handler.setFormatter(fmt=fmt)
+        self.logger.addHandler(self.File_handler)
 
         if self.debug:
             self.Console_hander = logging.StreamHandler()
@@ -72,15 +72,22 @@ class Log:
 
         return self.logger
 
+    def shutdown(self):
+        self.logger.removeHandler(self.File_handler)
+        self.logger.removeHandler(self.Console_hander)
+        logging.shutdown()
+
 
 if __name__ == '__main__':
-    from com import logger
+    from com import log
+    logger = log.logger
     logger.debug('debug message ')
     logger.info('info message')
     logger.warning('warning message')
     logger.error('error message')
     logger.critical('critical message')
     logger.debug(logger.name)
+    log.shutdown()
 
     # logger = Log(level='DEBUG').logger
     # logger.debug('debug message ')

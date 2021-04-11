@@ -1,14 +1,16 @@
 import subprocess as sub
 import pandas as pd
-from com import logger
+from com import log
 import os
 import time
 import traceback
 import random
 
+logger = log.logger
+
 
 class APP:
-    def __init__(self, appname='com.tencent.mm', log_level='DEBUG'):
+    def __init__(self, appname='com.tencent.mm'):
         """
         :param appname: 指的需要测试的app的包名，默认为微信的包名 com.tencent.mm
         """
@@ -24,7 +26,7 @@ class APP:
             'total': 'TOTAL:'
         }
         self.pidList = self.__getPid()
-        self.logger = logger
+        # self.logger = logger
         pass
 
     def __getPid(self) -> list:
@@ -66,10 +68,10 @@ class APP:
                         data = data.decode('utf-8').replace('\t', ' ').replace('\r', ' ').split('\n')
                         break
                     elif output.poll() is None:
-                        self.logger.debug('process poll is None , process is Running! loop count {}'.format(i + 1))
+                        logger.debug('process poll is None , process is Running! loop count {}'.format(i + 1))
                         time.sleep(1)
                     else:
-                        self.logger.error('Error! process poll Error, pid: {}'.format(output.poll()))
+                        logger.error('Error! process poll Error, pid: {}'.format(output.poll()))
                         os.kill(output.poll(), 1)
                         data = []
                         break
@@ -77,7 +79,7 @@ class APP:
                 data, err = output.communicate()
                 data = data.decode('utf-8').replace('\t', ' ').replace('\r', ' ').split('\n')
         except:
-            self.logger.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             traceback.print_exc(file=open('./file/Error.log', 'a'))
             exit(code=-1)
         for line in data:
@@ -108,7 +110,8 @@ if __name__ == '__main__':
     app = APP()
     # pid是appname所运行的进程中随机的一个，可以自己写死
     pid = app.pidList[random.randint(0, (len(app.pidList)) - 1)]
-    app.logger.info('APP pid is {}'.format(pid))
+    logger.info('APP pid is {}'.format(pid))
+
 
     def run():
         memDict = app.meminfo(pid)
@@ -116,13 +119,15 @@ if __name__ == '__main__':
         print(memDict)
         return TempList
 
+
     # LoopNumber 值用来循环的次数
     LoopNumber = 10
-    app.logger.debug(f'Loop number is f{LoopNumber}')
+    logger.debug(f'Loop number is f{LoopNumber}')
     [run() for i in range(LoopNumber)]
-    app.logger.info('Done')
+    logger.info('Done')
     # 如果没有装pandas，可以把下面的都注释掉，这样就不会写进excel文件
     df = pd.DataFrame(data=TempList, index=list(range(LoopNumber)))
     print('\n===============================================================================\n')
     print(df)
-    df.to_excel(r'./file/test.xlsx', sheet_name='{}'.format(pid))
+    df.to_excel('./file/test.xlsx', sheet_name='{}'.format(pid), encoding='utf-8')
+    log.shutdown()
