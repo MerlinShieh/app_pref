@@ -3,13 +3,16 @@
 # @Author  : Merlin.Xie
 
 import logging
-import time
 import os
+import time
+
 import colorlog
 
 
 class Log:
-    def __init__(self, log_name=None, directory=None, level='INFO', debug=True):
+
+    @classmethod
+    def init(cls, log_name=None, directory=None, level='INFO', debug=True):
         """
         :param log_name:日志保存位置，默认使用Y_M_D/H_M_S.log方式
         :param directory:日志保存目录，默认使用./Y_M_D
@@ -28,13 +31,13 @@ class Log:
             pass
 
         if not log_name:
-            self.log_name = timeSecond
+            cls.log_name = timeSecond
         else:
-            self.log_name = log_name
-        self.log_path = r'{}/{}.log'.format(directory, self.log_name)
-        self.level = level
-        self.debug = debug
-        self.log_colors_config = {
+            cls.log_name = log_name
+        cls.log_path = r'{}/{}.log'.format(directory, cls.log_name)
+        cls.level = level
+        cls.debug = debug
+        cls.log_colors_config = {
             'DEBUG': 'white',
             'INFO': 'green',
             'WARNING': 'yellow',
@@ -42,57 +45,61 @@ class Log:
             'CRITICAL': 'bold_red',
         }
 
-        self.logger = self.__logger()
+        return cls.__logger()
 
-    def __logger(self):
+
+    @classmethod
+    def __logger(cls):
         # 创建logger
-        self.logger = logging.getLogger(self.log_name)
-        self.logger.setLevel(level=logging.DEBUG)
+        cls.logger = logging.getLogger(cls.log_name)
+        cls.logger.setLevel(level=logging.DEBUG)
 
         # 日志级别
-        level = eval("logging." + self.level)
+        level = eval("logging." + cls.level)
         # 日志格式
         fmt = logging.Formatter('%(asctime)s    %(filename)s    --->  [%(levelname)s]   '
                                 '%(funcName)s   line:%(lineno)d  : %(message)s')
 
         # 设置handler
-        self.File_handler = logging.FileHandler(self.log_path)
-        self.File_handler.setLevel(level=level)
-        self.File_handler.setFormatter(fmt=fmt)
-        self.logger.addHandler(self.File_handler)
+        cls.File_handler = logging.FileHandler(cls.log_path)
+        cls.File_handler.setLevel(level=level)
+        cls.File_handler.setFormatter(fmt=fmt)
+        cls.logger.addHandler(cls.File_handler)
 
-        if self.debug:
-            self.Console_hander = logging.StreamHandler()
-            self.Console_hander.setLevel(level)
+        if cls.debug:
+            cls.Console_hander = logging.StreamHandler()
+            cls.Console_hander.setLevel(level)
             fmt = colorlog.ColoredFormatter(fmt='%(log_color)s %(asctime)s    %(filename)s    --->  '
                                                 '[%(levelname)s]   %(funcName)s   line:%(lineno)d  : %(message)s',
-                                            log_colors=self.log_colors_config)
-            self.Console_hander.setFormatter(fmt)
-            self.logger.addHandler(self.Console_hander)
+                                            log_colors=cls.log_colors_config)
+            cls.Console_hander.setFormatter(fmt)
+            cls.logger.addHandler(cls.Console_hander)
+        print("手动执行初始化logger")
+        print(cls.logger)
+        return cls.logger
 
-        return self.logger
-
-    def shutdown(self):
-        self.logger.removeHandler(self.File_handler)
-        self.logger.removeHandler(self.Console_hander)
+    @classmethod
+    def shutdown(cls):
+        cls.logger.removeHandler(cls.File_handler)
+        cls.logger.removeHandler(cls.Console_hander)
         logging.shutdown()
 
 
 if __name__ == '__main__':
-    from com import log
-    logger = log.logger
-    logger.debug('debug message ')
+    """
+    最好把类单独拿出来并且赋值给某个变量，这样在后面可以单独使用shutdown方法清除缓存
+    log = Log; logger = log.init()
+
+    当然也可以不用赋值直接 logger = Log.init
+    """
+    log = Log
+
+    # logger一定需要手动初始化
+    logger = log.init()
+
     logger.info('info message')
+    logger.debug('debug message')
     logger.warning('warning message')
     logger.error('error message')
     logger.critical('critical message')
-    logger.debug(logger.name)
-    log.shutdown()
 
-    # logger = Log(level='DEBUG').logger
-    # logger.debug('debug message ')
-    # logger.info('info message')
-    # logger.warning('warning message')
-    # logger.error('error message')
-    # logger.critical('critical message')
-    # logger.debug(logger.name)

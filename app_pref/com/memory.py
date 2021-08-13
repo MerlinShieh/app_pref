@@ -1,13 +1,10 @@
 import subprocess as sub
 import pandas as pd
-from com import log
+from com import logger
 import os
 import time
 import traceback
 import random
-
-logger = log.logger
-
 
 class APP:
     def __init__(self, appname='com.tencent.mm'):
