@@ -57,8 +57,8 @@ class Log:
         # 日志级别
         level = eval("logging." + cls.level)
         # 日志格式
-        fmt = logging.Formatter('%(asctime)s    %(filename)s    --->  [%(levelname)s]   '
-                                '%(funcName)s   line:%(lineno)d  : %(message)s')
+        fmt = logging.Formatter('%(asctime)s  [%(levelname)8s]  --- %(filename)5s   '
+                                '%(funcName)8s   line:%(lineno)4d  : %(message)s')
 
         # 设置handler
         cls.File_handler = logging.FileHandler(cls.log_path)
@@ -69,13 +69,11 @@ class Log:
         if cls.debug:
             cls.Console_hander = logging.StreamHandler()
             cls.Console_hander.setLevel(level)
-            fmt = colorlog.ColoredFormatter(fmt='%(log_color)s %(asctime)s    %(filename)s    --->  '
-                                                '[%(levelname)s]   %(funcName)s   line:%(lineno)d  : %(message)s',
+            fmt = colorlog.ColoredFormatter(fmt='%(log_color)s %(asctime)s  [%(levelname)8s]  --- '
+                                                '%(filename)5s  %(funcName)8s  line:%(lineno)4d  : %(message)s',
                                             log_colors=cls.log_colors_config)
             cls.Console_hander.setFormatter(fmt)
             cls.logger.addHandler(cls.Console_hander)
-        print("手动执行初始化logger")
-        print(cls.logger)
         return cls.logger
 
     @classmethod
