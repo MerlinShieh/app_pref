@@ -90,9 +90,8 @@ if __name__ == '__main__':
 
     当然也可以不用赋值直接 logger = Log.init
     """
-    log = Log
-
     # logger一定需要手动初始化
+    log = Log
     logger = log.init()
 
     logger.info('info message')
